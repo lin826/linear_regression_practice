@@ -6,7 +6,7 @@ import sys
 from approach import *
 
 APPR = Test_approach
-settings = {'map_size':1081,'dim':2,'iter':10,'eta':0.1,
+settings = {'map_size':1081,'dim':2,'iter':10,'eta':0.005,
     'basis_size':225,'sigma':30,
     'x_train':'data/X_train.csv','t_train':'data/T_train.csv'}
 
@@ -18,6 +18,8 @@ def main_opt(opt, data):
         settings[opt] = data
     elif(opt == 'approach'):
         set_approach(data)
+    elif(opt == 'eta'):
+        settings[opt] = float(data)
     else:
         settings[opt] = int(data)
 

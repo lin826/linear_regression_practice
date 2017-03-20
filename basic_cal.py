@@ -10,7 +10,7 @@ def gradient_descent(train_x, train_t, eta, num_iters):
     for i in range(num_iters):
         lost = train_t - numpy.dot(weights.T,phi).T
         weights = weights + eta * phi.dot(lost)
-        print(i,': ',weights)
+        # print(i,': ',weights)
         err = MSE(lost)
         if(err < result_err):
         	result_err = err
