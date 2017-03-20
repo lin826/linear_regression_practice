@@ -6,8 +6,10 @@ import sys
 from approach import *
 
 APPR = Test_approach
-settings = {"map_size":1081,"dim":2,"iter":100,"eta":0.005,
-    "basis_size":1024,"sigma":30, "lambda":0.1,
+settings = {"map_size":1081,"dim":2,"data_size":1000,
+    "iter":10,"eta":0.5,"k_folder":0,
+    "basis_size":1024,"sigma":20, "lamb":0.005,
+    "m0":0,"alpha":2,"beta":25,
     "x_train":"data/X_train.csv","t_train":"data/T_train.csv"}
 
 def main_opt(opt, data):
@@ -15,7 +17,7 @@ def main_opt(opt, data):
         settings[opt] = data
     elif(opt == "approach"):
         set_approach(data)
-    elif(opt == "eta" or opt == "lambda"):
+    elif(opt == "eta" or opt == "lamb"):
         settings[opt] = float(data)
     else:
         settings[opt] = int(data)
@@ -40,5 +42,10 @@ if __name__ == "__main__":
         if(arg[i].startswith("--")):
             opt = arg[i][2:]
             main_opt(opt,arg[i+1])
-    model_setting(settings)
-    APPR()
+    model_init(settings)
+    for k in range(settings['k_folder']+1):
+        model_setting(settings,k+1)
+        set_Gausian_basis()
+        weights = APPR()
+
+    draw(weights,show_2d_gragh)

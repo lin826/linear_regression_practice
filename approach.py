@@ -3,38 +3,62 @@ from draw_graph import *
 from data_io import *
 from basic_cal import *
 
-def model_setting(s):
-    global Train_x,Train_t,settings
+def model_init(s):
+    global Ground_x,Ground_t,Train_x,Train_t,Test_x,Test_t,settings
     Train_x, Train_t = get_train_data(s['x_train'],s['t_train'])
-    Train_x = numpy.array(Train_x[:40000])
-    Train_t = numpy.array(Train_t[:40000])
+    n = len(Train_x)
+    indices = numpy.asarray(range(n), dtype=numpy.int32)
+    n_train = s['data_size']
+    numpy.random.shuffle(indices)
+    Ground_x = numpy.array(Train_x)
+    Ground_t = numpy.array(Train_t)
+    Ground_x = Ground_x[indices[:n_train]]
+    Ground_t = Ground_t[indices[:n_train]]
     settings = s
-    print('Finish settings')
+    print('Finish initializing')
 
-# Test on MAP now
-def Test_approach():
+def model_setting(s,k):
+    if s['k_folder'] == 0:
+        Train_x = Ground_x
+        Train_t = Ground_t
+        Test_x = Ground_x
+        Test_t = Ground_t
+    else:
+        k_size = s['data_size'] / s['k_folder']
+        Train_x = Ground_x[k_size*k :k_size*(k+1)]
+        Train_t = Ground_t[k_size*k :k_size*(k+1)]
+        Test_x = Ground_x[k_size*(k+1):k_size*(k+2)]
+        Test_t = Ground_t[k_size*(k+1):k_size*(k+2)]
+
+def set_Gausian_basis():
     set_Gausian_mean(settings['basis_size'],settings['map_size'],grid_mean)
     set_Gausian_sigma(settings['sigma'])
-    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'])
-    # print(weights.size,'=',len(weights),'*',len(weights[0]))
-    graph_x,graph_t = get_graph_data(weights)
-    show_2d_gragh(graph_x,graph_t,settings['map_size'])
-    return 0
+
+# Test on Baysian now
+def Test_approach():
+    phi = get_phi(Train_x)
+    weights = get_theta_Bayssian(phi,Train_t,settings['beta'],settings['alpha'],settings['m0'])
+    MSE(Train_t - numpy.dot(weights.T,phi).T)
+    return weights
+
+def MAP_approach():
+    print('Start MAP approach')
+    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'],settings['lamb'])
+    return weights
 
 def ML_approach():
     print('Start ML approach')
-    set_Gausian_mean(settings['basis_size'],settings['map_size'],grid_mean)
-    set_Gausian_sigma(settings['sigma'])
-    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'])
-    # print(weights.size,'=',len(weights),'*',len(weights[0]))
+    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'],0)
+    return weights
 
-    # graph_x,graph_t = get_graph_data(weights)
-    # show_2d_gragh(graph_x,graph_t,settings['map_size'])
-    return 0
+def draw(weights,method):
+    graph_x,graph_t = get_graph_data(weights)
+    method(graph_x,graph_t,settings['map_size'])
 
 def get_graph_data(w):
     s = settings['map_size']
-    graph_x = [[i,j] for j in range(s) for i in range(s)]
+    scale = 5
+    graph_x = [[i*scale,j*scale] for j in range(s/scale) for i in range(s/scale)]
     print('Start get graph_t')
     phi = get_phi(graph_x)
     graph_t = numpy.dot(w.T,phi).T
