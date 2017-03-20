@@ -28,7 +28,7 @@ def show_2d_gragh(X,y,MAP_SIZE):
     # Insert the known data
     for e in range(len(y)):
         x1,x2 = int(X[e][0]),int(X[e][1])
-        result[x1][x2] = y[e]
+        result[x1][x2] = y[e][0]
     # Show the Image
     plt.imshow(result, extent=(0, MAP_SIZE, 0, MAP_SIZE), aspect = 'auto')
     plt.colorbar()
