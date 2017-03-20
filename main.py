@@ -7,7 +7,7 @@ from approach import *
 
 APPR = Test_approach
 settings = {'map_size':1081,'dim':2,'iter':10,'eta':0.1,
-    'basis_size':100,'sigma':30,
+    'basis_size':225,'sigma':30,
     'x_train':'data/X_train.csv','t_train':'data/T_train.csv'}
 
 def main_opt(opt, data):
