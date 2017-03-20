@@ -22,6 +22,7 @@ def Test_approach():
     return 0
 
 def ML_approach():
+    print('Start ML approach')
     set_Gausian_mean(settings['basis_size'],settings['map_size'],grid_mean)
     set_Gausian_sigma(settings['sigma'])
     weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'])
