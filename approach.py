@@ -30,8 +30,12 @@ def model_setting(s,k):
         k_size = int(s['data_size'] / s['k_folder'])
         Train_x = Ground_x[k_size*(k-1) :k_size*(k)]
         Train_t = Ground_t[k_size*(k-1) :k_size*(k)]
-        Test_x = Ground_x[k_size*(k):k_size*(k+1)]
-        Test_t = Ground_t[k_size*(k):k_size*(k+1)]
+        if(k==s['k_folder']):
+            Test_x = Ground_x[0:k_size*(1)]
+            Test_t = Ground_t[0:k_size*(1)]
+        else:
+            Test_x = Ground_x[k_size*(k):k_size*(k+1)]
+            Test_t = Ground_t[k_size*(k):k_size*(k+1)]
         print(k,':',Train_t.shape,Test_t.shape)
     return 0
 

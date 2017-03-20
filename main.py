@@ -44,7 +44,7 @@ if __name__ == "__main__":
             main_opt(opt,arg[i+1])
     model_init(settings)
     for k in range(settings['k_folder']+1):
-        if model_setting(settings,k) < 0:
+        if model_setting(settings,k+1) < 0:
             break
         set_Gausian_basis()
         weights = APPR()
