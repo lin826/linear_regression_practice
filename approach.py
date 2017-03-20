@@ -39,16 +39,16 @@ def set_Gausian_basis():
     set_Gausian_mean(settings['basis_size'],settings['map_size'],grid_mean)
     set_Gausian_sigma(settings['sigma'])
 
-# Test on Bayssian now
+# Test on Bayessian now
 def Test_approach():
     phi = get_phi(Train_x)
-    weights = get_theta_Bayssian(phi,Train_t,settings['beta'],settings['alpha'],settings['m0'])
+    weights = get_theta_Bayessian(phi,Train_t,settings['beta'],settings['alpha'],settings['m0'])
     MSE(Train_t - numpy.dot(weights.T,phi).T)
     return weights
 
 def Test_approach():
     phi = get_phi(Train_x)
-    weights = get_theta_Bayssian(phi,Train_t,settings['beta'],settings['alpha'],settings['m0'])
+    weights = get_theta_Bayessian(phi,Train_t,settings['beta'],settings['alpha'],settings['m0'])
     MSE(Train_t - numpy.dot(weights.T,phi).T)
     return weights
 

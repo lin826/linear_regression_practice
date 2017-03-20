@@ -1,8 +1,8 @@
 
 import numpy
 from numpy import ones
-# Do Bayssian approach
-def get_theta_Bayssian(phi,train_t,beta,alpha,m0):
+# Do Bayessian approach
+def get_theta_Bayessian(phi,train_t,beta,alpha,m0):
     m0 = ones(shape=(len(phi),1))*m0
     phi_dot = phi.dot(phi.T)
     S0_ = 1/alpha*numpy.identity(len(phi_dot))

@@ -29,8 +29,8 @@ def set_approach(data):
         APPR = ML_approach
     elif(data == "MAP"):
         APPR = MAP_approach
-    elif(data == "Bayssian"):
-        APPR = Bayssian_approach
+    elif(data == "Bayessian"):
+        APPR = Bayessian_approach
     elif(data == "Test"):
         APPR = Test_approach
     else:
