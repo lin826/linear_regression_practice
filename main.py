@@ -48,5 +48,5 @@ if __name__ == "__main__":
             break
         set_Gausian_basis()
         weights = APPR()
-
+    cal_MSE()
     draw(weights,show_2d_gragh)

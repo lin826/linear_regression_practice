@@ -66,6 +66,9 @@ def ML_approach():
     weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'],0,settings['batch_size'])
     return weights
 
+def cal_MSE():
+    print('Average MSE:',get_sum_MSE()/settings['k_folder'])
+
 def draw(weights,method):
     graph_x,graph_t = get_graph_data(weights)
     method(graph_x,graph_t,settings['map_size'])

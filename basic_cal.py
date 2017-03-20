@@ -1,6 +1,9 @@
 
 import numpy
 from numpy import ones
+
+sum_MSE = 0
+
 # Do Bayessian approach
 def get_theta_Bayessian(phi,train_t,beta,alpha,m0):
     m0 = ones(shape=(len(phi),1))*m0
@@ -58,10 +61,14 @@ def evaluate_algorithm(test_x, test_t):
 
 # Get MSE error value
 def MSE(lost):
+    global sum_MSE
     mse = (lost**2).sum()/len(lost)
     print('mean square error: ',mse)
+    sum_MSE += mse
     return mse
-
+def get_sum_MSE():
+    global sum_MSE
+    return sum_MSE
 # Two ways to get mean in Gausian: grid_mean, k_mean
 def set_Gausian_mean(BASIS_SIZE,MAP_SIZE,mean_get):
     global Gausian_mean
