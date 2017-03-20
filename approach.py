@@ -9,8 +9,9 @@ def model_setting(s):
     Train_x = numpy.array(Train_x[:40000])
     Train_t = numpy.array(Train_t[:40000])
     settings = s
+    print('Finish settings')
 
-# Test on ML now
+# Test on MAP now
 def Test_approach():
     set_Gausian_mean(settings['basis_size'],settings['map_size'],grid_mean)
     set_Gausian_sigma(settings['sigma'])
@@ -18,6 +19,16 @@ def Test_approach():
     # print(weights.size,'=',len(weights),'*',len(weights[0]))
     graph_x,graph_t = get_graph_data(weights)
     show_2d_gragh(graph_x,graph_t,settings['map_size'])
+    return 0
+
+def ML_approach():
+    set_Gausian_mean(settings['basis_size'],settings['map_size'],grid_mean)
+    set_Gausian_sigma(settings['sigma'])
+    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'])
+    # print(weights.size,'=',len(weights),'*',len(weights[0]))
+
+    # graph_x,graph_t = get_graph_data(weights)
+    # show_2d_gragh(graph_x,graph_t,settings['map_size'])
     return 0
 
 def get_graph_data(w):
