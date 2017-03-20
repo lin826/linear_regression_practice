@@ -18,23 +18,34 @@ def model_init(s):
     print('Finish initializing')
 
 def model_setting(s,k):
+    global Train_x,Train_t,Test_x,Test_t
     if s['k_folder'] == 0:
         Train_x = Ground_x
         Train_t = Ground_t
         Test_x = Ground_x
         Test_t = Ground_t
     else:
-        k_size = s['data_size'] / s['k_folder']
-        Train_x = Ground_x[k_size*k :k_size*(k+1)]
-        Train_t = Ground_t[k_size*k :k_size*(k+1)]
-        Test_x = Ground_x[k_size*(k+1):k_size*(k+2)]
-        Test_t = Ground_t[k_size*(k+1):k_size*(k+2)]
+        if(k>s['k_folder']):
+            return -1
+        k_size = int(s['data_size'] / s['k_folder'])
+        Train_x = Ground_x[k_size*(k-1) :k_size*(k)]
+        Train_t = Ground_t[k_size*(k-1) :k_size*(k)]
+        Test_x = Ground_x[k_size*(k):k_size*(k+1)]
+        Test_t = Ground_t[k_size*(k):k_size*(k+1)]
+        print(k,':',Train_t.shape,Test_t.shape)
+    return 0
 
 def set_Gausian_basis():
     set_Gausian_mean(settings['basis_size'],settings['map_size'],grid_mean)
     set_Gausian_sigma(settings['sigma'])
 
-# Test on Baysian now
+# Test on Bayssian now
+def Test_approach():
+    phi = get_phi(Train_x)
+    weights = get_theta_Bayssian(phi,Train_t,settings['beta'],settings['alpha'],settings['m0'])
+    MSE(Train_t - numpy.dot(weights.T,phi).T)
+    return weights
+
 def Test_approach():
     phi = get_phi(Train_x)
     weights = get_theta_Bayssian(phi,Train_t,settings['beta'],settings['alpha'],settings['m0'])
@@ -43,12 +54,12 @@ def Test_approach():
 
 def MAP_approach():
     print('Start MAP approach')
-    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'],settings['lamb'])
+    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'],settings['lamb'],settings['batch_size'])
     return weights
 
 def ML_approach():
     print('Start ML approach')
-    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'],0)
+    weights = gradient_descent(Train_x,Train_t, settings['eta'], settings['iter'],0,settings['batch_size'])
     return weights
 
 def draw(weights,method):
@@ -57,8 +68,9 @@ def draw(weights,method):
 
 def get_graph_data(w):
     s = settings['map_size']
-    scale = 5
-    graph_x = [[i*scale,j*scale] for j in range(s/scale) for i in range(s/scale)]
+    scale = 2
+    grid_size = int(s/scale)
+    graph_x = [[i*scale,j*scale] for j in range(grid_size) for i in range(grid_size)]
     print('Start get graph_t')
     phi = get_phi(graph_x)
     graph_t = numpy.dot(w.T,phi).T

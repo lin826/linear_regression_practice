@@ -7,8 +7,8 @@ from approach import *
 
 APPR = Test_approach
 settings = {"map_size":1081,"dim":2,"data_size":1000,
-    "iter":10,"eta":0.5,"k_folder":0,
-    "basis_size":1024,"sigma":20, "lamb":0.005,
+    "batch_size":16,"iter":100,"eta":0.5,"k_folder":0,
+    "basis_size":400,"sigma":20, "lamb":0.005,
     "m0":0,"alpha":2,"beta":25,
     "x_train":"data/X_train.csv","t_train":"data/T_train.csv"}
 
@@ -29,8 +29,8 @@ def set_approach(data):
         APPR = ML_approach
     elif(data == "MAP"):
         APPR = MAP_approach
-    elif(data == "Baysian"):
-        APPR = Baysian_approach
+    elif(data == "Bayssian"):
+        APPR = Bayssian_approach
     elif(data == "Test"):
         APPR = Test_approach
     else:
@@ -44,7 +44,8 @@ if __name__ == "__main__":
             main_opt(opt,arg[i+1])
     model_init(settings)
     for k in range(settings['k_folder']+1):
-        model_setting(settings,k+1)
+        if model_setting(settings,k+1) < 0:
+            break
         set_Gausian_basis()
         weights = APPR()
 

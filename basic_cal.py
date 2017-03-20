@@ -1,7 +1,7 @@
 
 import numpy
 from numpy import ones
-# Do Baysian approach
+# Do Bayssian approach
 def get_theta_Bayssian(phi,train_t,beta,alpha,m0):
     m0 = ones(shape=(len(phi),1))*m0
     phi_dot = phi.dot(phi.T)
@@ -12,10 +12,9 @@ def get_theta_Bayssian(phi,train_t,beta,alpha,m0):
 
 # Do Stochastic (sequential) gradient descent
 # Return result_weights
-def gradient_descent(train_x, train_t, eta, num_iters,lamb):
+def gradient_descent(train_x, train_t, eta, num_iters,lamb,batch_size):
     result_err = 1e+300
     n = len(train_x)
-    batch_size = 16
     phi = get_phi(train_x)
     weights = ones(shape=(len(Gausian_mean), 1))
     for i in range(num_iters):
@@ -52,7 +51,7 @@ def Gausian_function(x):
         a = 1 * numpy.exp( - ((x[0] - m[0])**2+(x[1] - m[1])**2) / (2 * Gausian_sigma**2) )
         result.append(a)
     return numpy.array(result)
-    
+
 def evaluate_algorithm(test_x, test_t):
     phi = get_phi(test_x)
     return MSE(test_t - numpy.dot(weights.T,phi).T)
