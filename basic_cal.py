@@ -47,13 +47,13 @@ def get_phi(X):
 def Gausian_function(x):
     result = []
     for m in Gausian_mean:
-        a = 1.0 * numpy.exp( - (numpy.square(x[0] - m[0])+numpy.square(x[1] - m[1])) / (2.0 * Gausian_sigma**2) )
+        a = numpy.exp( - (numpy.square(x[0] - m[0])+numpy.square(x[1] - m[1])) / (2.0 * Gausian_sigma**2) )
         result.append(a)
     return numpy.array(result)
 
 def evaluate_algorithm(test_x, test_t):
     phi = get_phi(test_x)
-    return MSE(test_t - numpy.dot(weights.T,phi).T)
+    return MSE(test_t - phi.dot(weights.T).T)
 
 # Get MSE error value
 def MSE(lost):
@@ -68,7 +68,7 @@ def get_sum_MSE():
     return sum_MSE
 
 def get_phi_MSE(X,y,weights):
-    return (numpy.square(y - weights.T * get_phi(X))).sum()/len(y)
+    return (numpy.square(y - get_phi(X).dot(weights))).sum()/(2*len(y))
 
 # Two ways to get mean in Gausian: grid_mean, k_mean
 def set_Gausian_mean(BASIS_SIZE,MAP_SIZE,mean_get):
