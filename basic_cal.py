@@ -1,16 +1,16 @@
 
 import numpy
-from numpy import ones
+from numpy import ones,zeros
 
 sum_MSE = 0
 
-# Do Bayessian approach
-def get_theta_Bayessian(phi,train_t,beta,alpha,m0):
-    m0 = ones(shape=(len(phi),1))*m0
-    phi_dot = phi.dot(phi.T)
-    S0_ = 1/alpha*numpy.identity(len(phi_dot))
+# Do Bayesian approach
+def get_theta_Bayesian(phi,train_t,beta,alpha,m0):
+    m0 = ones(shape=(len(phi.T),1))*m0
+    phi_dot = phi.T.dot(phi)
+    S0_ = 1.0/alpha*numpy.identity(len(phi_dot))
     Sn = numpy.linalg.inv(S0_+beta*phi_dot)
-    mn = Sn.dot(S0_.dot(m0) + beta*phi.dot(train_t))
+    mn = Sn.dot(S0_.dot(m0) + beta*phi.T.dot(train_t))
     return mn
 
 # Do Stochastic (sequential) gradient descent
@@ -22,36 +22,32 @@ def gradient_descent(train_x, train_t, eta, num_iters,lamb,batch_size):
     weights = ones(shape=(len(Gausian_mean), 1))
     for i in range(num_iters):
         for j in range(0, n, batch_size):
-            if lamb != 0:
-                regularization = (weights**2).sum()/len(weights) * lamb
-            else:
-                regularization = 0
             j_ = min(n, j + batch_size)
-            phi_batch = phi[:,j:j_]
+            regularization = zeros(shape=(j_-j, 1))
+            if lamb != 0:
+                r = numpy.square(weights).sum()/len(weights) * lamb
+                regularization = ones(shape=(j_-j, 1))*r
+            phi_batch = phi[j:j_]
             t_batch = train_t[j:j_]
-            # print('phi',phi.shape)
-            lost = t_batch - numpy.dot(weights.T,phi_batch).T + regularization
-            # print('lost',lost.shape)
-            weights = weights + eta * phi_batch.dot(lost)
-            # print('weights',weights.shape)
-            # print(i,': ',weights)
-        err = MSE(train_t - numpy.dot(weights.T,phi).T)
+            lost = t_batch - numpy.dot(phi_batch,weights) + regularization
+            weights = weights + eta * phi_batch.T.dot(lost)
+        err = MSE(train_t - numpy.dot(weights.T,phi.T).T)
         if(err < result_err):
             result_err = err
             result_weights = weights
-
+    MSE(train_t - numpy.dot(result_weights.T,phi.T).T)
     return result_weights
 
 def get_phi(X):
     phi = []
     for x in X:
         phi.append(Gausian_function(x))
-    return numpy.array(phi).T
+    return numpy.array(phi)
 
 def Gausian_function(x):
     result = []
     for m in Gausian_mean:
-        a = 1 * numpy.exp( - ((x[0] - m[0])**2+(x[1] - m[1])**2) / (2 * Gausian_sigma**2) )
+        a = 1.0 * numpy.exp( - (numpy.square(x[0] - m[0])+numpy.square(x[1] - m[1])) / (2.0 * Gausian_sigma**2) )
         result.append(a)
     return numpy.array(result)
 
@@ -62,13 +58,18 @@ def evaluate_algorithm(test_x, test_t):
 # Get MSE error value
 def MSE(lost):
     global sum_MSE
-    mse = (lost**2).sum()/len(lost)
-    print('mean square error: ',mse)
+    mse = numpy.square(lost).sum()/len(lost)
+    print('training gradient MSE: ',mse)
     sum_MSE += mse
     return mse
+
 def get_sum_MSE():
     global sum_MSE
     return sum_MSE
+
+def get_phi_MSE(X,y,weights):
+    return (numpy.square(y - weights.T * get_phi(X))).sum()/len(y)
+
 # Two ways to get mean in Gausian: grid_mean, k_mean
 def set_Gausian_mean(BASIS_SIZE,MAP_SIZE,mean_get):
     global Gausian_mean
